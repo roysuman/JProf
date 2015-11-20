@@ -1,0 +1,22 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  onTheFlyData.h
+ *
+ *    Description:  data through the network level.
+ *
+ *        Version:  1.0
+ *        Created:  Thursday 20 August 2015 10:40:13  IST
+ *       Revision:  none
+ *       Compiler:  g++4.7
+ *
+ *         Author:  Suman Roy (), suman.roy@cognizant.com
+ *   Organization:  Cognizant Technological Solutions
+ *
+ * =====================================================================================
+ */
+#ifndef ONTHEFLYDATA_H
+#define ONTHEFLYDATA_H
+
+#include "iostream"
+#endif
