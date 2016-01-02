@@ -1,11 +1,11 @@
 
 
 #Intro
- The aim of this project is to build an opensource Java profiler using JVMTI interface. I am a performance engineer where I need to use several profiling tools to find the bottleneck. In market several java profiling tools are available( Jprofiler. dynatrace..), I am trying to build a tool like Jprofiler/dynatrace, which will be developed by open source community. If open sources enthusiast developers starts contributing on developing then this tool might be a big hit. I am requesting you please do contribute.
+ The aim of this project is to build an opensource Java profiler using JVMTI interface. I am a performance engineer where I need to use several profiling tools to find the bottleneck. In market several java profiling tools are already available( Jprofiler. dynatrace..), I am trying to build a tool like Jprofiler/dynatrace, which will be developed by open source community.
 
 #Thanks-giving:
 
-Thank you [JEREMY MANSON][1], your blog and source code helps a lot to understand this concept, and after reading your blog only I got this idea to develop an opensource tool. Though I have started developing this tool from scratch, you might find some code from Jermy's code base(specifically makefile).
+Thank you [JEREMY MANSON][1], your blog and source code helped a lot to understand this concept, and after reading your blog only I got this idea of developing an opensource tool. Though I have started developing this tool from scratch, you might find some code from Jermy's code base(specifically makefile).
 
 [1]:http://jeremymanson.blogspot.in/
 
