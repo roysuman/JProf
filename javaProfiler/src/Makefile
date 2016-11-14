@@ -1,7 +1,7 @@
 all: agent
 LDFLAGS = -L.
 agent: *.cpp
-	g++ -c -g -fpic *.cpp *.hpp -Wall -Wextra -ldl -std=c++0x -pthread -fpermissive -pthread -I /usr/lib/jvm/java-7-openjdk-amd64/include -DLINUX -D__LP64__=1
+	g++ -c -g -fpic *.cc *.h -Wall -Wextra -ldl -std=c++0x -pthread -fpermissive -pthread -I /usr/lib/jvm/java-7-openjdk-amd64/include -DLINUX -D__LP64__=1
 	g++ -g -shared -o libagent.so agentInit.o profiler.o signaHandler.o -Wall -Wextra -ldl -std=c++0x -fpermissive -pthread -I /usr/lib/jvm/java-7-openjdk-amd64/include -DLINUX -D__LP64__=1
 
 clean:

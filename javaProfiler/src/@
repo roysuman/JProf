@@ -46,6 +46,6 @@ class JavaProfiler{
         CQueue *circulerQueue;
 
         void sleepFor(const unsigned int&);
-        static bool getFrameInfo(jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
+        static bool getFrameInfo(const jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
 };
 #endif

@@ -18,66 +18,65 @@
 
 #include "profiler.h"
 
-/*  Creates a new jthread */
+//Creates a new jthread
 static jthread 
 allocThread(JNIEnv *jniEnvironment) {
 #ifdef DEBUG
-	std::cout<<"##################ALLOC THREAD @@@@@@@@@@@@@@@"<<std::endl;
+	std::cout<<"################## ALLOC THREAD @@@@@@@@@@@@@@@"<<std::endl;
 #endif
-	jclass    thrClass;
-	jmethodID cid;
-	jthread   res;
-	thrClass = jniEnvironment->FindClass( "java/lang/Thread");
-	if ( thrClass == NULL ) {
+	const jclass threadClass = jniEnvironment->FindClass("java/lang/Thread");
+
+	if (threadClass == NULL) {
 		std::cerr<<"Cannot find Thread class\n";
 	}
-	cid = jniEnvironment->GetMethodID( thrClass, "<init>", "()V");
-	if ( cid == NULL ) {
+	const jmethodID constructorMethod = jniEnvironment->GetMethodID(threadClass, "<init>", "()V");
+	if (constructorMethod == NULL) {
 		std::cerr<<"Cannot find Thread constructor method\n";
 	}
-	res = jniEnvironment->NewObject( thrClass, cid);
-	if ( res == NULL ) {
+	const jthread threadObject = jniEnvironment->NewObject(threadClass, constructorMethod);
+	if (threadObject == NULL) {
 		std::cerr<<"Cannot create new Thread object";
-	}else {
-		jmethodID mid = jniEnvironment->GetMethodID
-			(thrClass, "setName","(Ljava/lang/String;)V");
-		 jniEnvironment->CallObjectMethod
-			 (res, mid, jniEnvironment->NewStringUTF("Honest Profiler Daemon Thread"));                                                     }
-	return res;
+	} else {
+        const jmethodID methodId = jniEnvironment->GetMethodID
+			(threadClass, "setName", "(Ljava/lang/String;)V");
+        jniEnvironment->CallObjectMethod(threadObject, methodId, jniEnvironment->NewStringUTF("Honest Profiler Daemon Thread"));
+    }
+    return threadObject;
 }
 
 void 
-JavaProfiler::sleepFor(unsigned int sleepTime){
-	usleep ( sleepTime * 1 );//TODO handle return val
+JavaProfiler::sleepFor(const unsigned int &sleepTime) {
+	usleep(sleepTime * 1);//TODO handle return val
 }
 
 void
-JavaProfiler::worker( void ){
+JavaProfiler::worker() {
 	//wait for connection...
 	//and after receiving the connection .. start monitoring JV
 	//TODO some global variable set must be done by -- after analyzing the received pack from client
 //        tcpSock->continueLoop(tcpSock ); 
 	
-	while (1){
-		queue->pop( );
-		sleepFor( 1);
+	while (1) {
+		circulerQueue->pop();
+		sleepFor(1);
 //		sigHandler.updateIntervalTime ( );
 
 	}
 }
 
-
 void
-JavaProfiler::startCallBack( void ){
-	jvmtiError    err;
+JavaProfiler::startCallBack() {
 	//method must be called by the signal handler
 	jvmtiStartFunction callbackFunction = 
 		[](jvmtiEnv *jvmtiEnvironment, JNIEnv *jniEnvironemnt, void *arg) {
-	      JavaProfiler  *profiler = ( JavaProfiler *) arg;
+	      JavaProfiler  *profiler = (JavaProfiler*) arg;
 	      profiler->worker();
 		};
-	err = jvmti->RunAgentThread(allocThread ( getJNIEnv()) , 
+	const jvmtiError err = jvmti->RunAgentThread(allocThread(getJNIEnv()), 
 			callbackFunction, this, JVMTI_THREAD_NORM_PRIORITY);
+    if (err != JVMTI_ERROR_NONE) {
+        std::cerr<<err<<std::endl;
+    }
 
 	//TODO check error
 }
@@ -89,42 +88,33 @@ JavaProfiler::startCallBack( void ){
  * =====================================================================================
  */
 bool
-JavaProfiler::startProfiler (  ){
-//	std::cout<<"Start Profiler="<<k<<std::endl;
+JavaProfiler::startProfiler() {
 	//set action
-	sigHandler.setAction ( &sigHandler_ );
+	sigHandler.setAction(&sigHandler_);
 
-	startCallBack ( );
-	sigHandler.updateIntervalTime ( );
+	startCallBack();
+	sigHandler.updateIntervalTime();
 	return true;
 }
 
 void
-JavaProfiler::readCallTrace(int sigNum , siginfo_t *sigInfo  , void * context ){
-	ASGCT_CallFrame    frames [ MAX_FRAME_TO_CAPTURE ];
-	JNIEnv    *jniEnv;
+JavaProfiler::readCallTrace(int sigNum, siginfo_t *sigInfo, void * context) {
+	ASGCT_CallFrame    frames[MAX_FRAME_TO_CAPTURE];
 	ASGCT_CallTrace    callTrace;
 	//TODO init the frame to zero
 //	memset ( frames , sizeof( ASGCT_CallFrame ) * MAX_FRAME_TO_CAPTURE );
-
 	callTrace.frames = frames;
-	jniEnv = getJNIEnv ( );
-	if ( jniEnv == NULL ){
+	JNIEnv* jniEnv = getJNIEnv();
+	if (jniEnv == NULL) {
 		//raised an error
-	}else {
-		callTrace.envId = jniEnv ;
+	} else {
+		callTrace.envId = jniEnv;
 		asynGCTType asynGCT = AsynGCT::getAsynGCT();
-		(*asynGCT) ( &callTrace , MAX_FRAME_TO_CAPTURE , context );
-		//write the stacktrace in a circuler queue
-//		std::cout<<"Calltrace: Frame count [ "<<callTrace.numFrames<<"] "<<std::endl;
-		if ( callTrace.numFrames > 0 ){
-#ifdef DEBUG
-			queue->push( callTrace ) == true ? std::cout<<"DATA ENTERED IN QUEUE\n":std::cout<<"DATA NOT ENTERED\n";
-
+		(*asynGCT)(&callTrace, MAX_FRAME_TO_CAPTURE, context);
+		//print stack trace
+        std::cout<<"Calltrace: Frame count [ "<<callTrace.numFrames<<"] "<<std::endl;
+		if (callTrace.numFrames > 0) {
 			std::cout<<"METHOD ID [ "<<callTrace.frames[0].methodId<<" ] "<<std::endl;
-#else
-			queue->push( callTrace );
-#endif
 		}
 	}
 }
@@ -147,10 +137,10 @@ JavaProfiler::getJNIEnv( void ){
 }
 
 bool
-JavaProfiler::getFrameInfo( jvmtiEnv *jvmti , const jmethodID &methodId , onTheFlyCallFrame &flyCallFrame ){
+JavaProfiler::getFrameInfo(jvmtiEnv *jvmti ,const jmethodID &methodId ,onTheFlyCallFrame &flyCallFrame ){
 	jint error;
 	//get method name
-	JvmtiPTR< char > methodName( jvmti );
+	JvmtiPTR< char > methodName(jvmti);
 	error = jvmti->GetMethodName( methodId , methodName.returnReference(), NULL, NULL);
 	
 	 
@@ -165,11 +155,11 @@ JavaProfiler::getFrameInfo( jvmtiEnv *jvmti , const jmethodID &methodId , onTheF
 	
 	// get file name
 	JvmtiPTR<char> fileName( jvmti );
-	error = jvmti->GetSourceFileName ( className , fileName.returnReference() );
-	flyCallFrame.methodId = ( int64_t ) methodId;
-	flyCallFrame.fileName = std::string( fileName.returnRef());
-	flyCallFrame.className = std::string ( signaturePtr.returnRef());
-	flyCallFrame.methodName = std::string ( methodName.returnRef());
+	error = jvmti->GetSourceFileName (className ,fileName.returnReference());
+	flyCallFrame.methodId = (int64_t) methodId;
+	flyCallFrame.fileName = std::string(fileName.returnRef());
+	flyCallFrame.className = std::string(signaturePtr.returnRef());
+	flyCallFrame.methodName = std::string(methodName.returnRef());
 #ifdef DEBUG
 	std::cout<<"MethodId: [ "<<(int64_t)methodId<<" ] => FileName [ "<<fileName.returnRef()<<" ] => ClassName [ "<<signaturePtr.returnRef()<<" ] ==> MethodName [ "<<methodName.returnRef()<<" ] "<<std::endl;
 #endif
