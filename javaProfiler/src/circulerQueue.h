@@ -20,22 +20,37 @@
 #include "stacktrace.h"
 #include "global.h"
 #include "onTheFlyData.h"
+#include "lockManager.h"
 #include <mutex>
+
 #define QUEUE_CAPACITY 1024
-#define BUFFER_SIZE    524288
+
 typedef bool (*getFrameInfoPtr)(jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
 
 class CQueue {
 	public:
-		explicit CQueue(jvmtiEnv *jvmti_, getFrameInfoPtr frameInfo_):frameInfo(frameInfo_),jvmti(jvmti_),readHead(-1),writeHead(-1) {}
-		virtual ~CQueue() {}
+		explicit CQueue(jvmtiEnv *jvmti_, getFrameInfoPtr frameInfo_):frameInfo(frameInfo_),jvmti(jvmti_),readHead(-1),writeHead(-1) {
+            mLock = new MutexLock(&mut);
+        }
+		virtual ~CQueue(void) {
+            delete mLock;
+        }
 		getFrameInfoPtr frameInfo;
 		bool push(ASGCT_CallTrace &);
 		bool pop(void);
 		jvmtiEnv    *jvmti;
-		unsigned char buffer[ BUFFER_SIZE ];
 		size_t    bufferIndex;
 	private:
+        inline void doLock(void) {
+            pthread_mutex_lock(&lock);
+        }
+
+        inline void doUnLock(void) {
+            pthread_mutex_unlock(&lock);
+        }
+
+        MutexLock *mLock;
+        Mutex mut;
 		int    readHead;
 		int    writeHead;
 		ASGCT_CallTrace callTraceBuffer[QUEUE_CAPACITY];

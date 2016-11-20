@@ -43,76 +43,73 @@
   DISALLOW_COPY_AND_ASSIGN(TypeName)
 
 
-
-static bool
-isError( jvmtiEnv *jvmti , jvmtiError errNum , const char *errorString ){
+static bool isError(jvmtiEnv *jvmti, jvmtiError errNum, const char *errorString) {
 	bool    returnVal;
 
 	returnVal = true;
-	if ( errNum != JVMTI_ERROR_NONE ){
+	if (errNum != JVMTI_ERROR_NONE) {
 		char *error = NULL;
-//		char *error2 = NULL;
-	//	char *error2 = NULL;
-		jvmti->GetErrorName(errNum , &error );
-		/*
-		error2 = error == NULL ? "Not Registered Error": error;
-		std::cerr<<" JVMTI Error : "<<error2<"UDefined Error"<<errorString<<std::endl;*/
+		jvmti->GetErrorName(errNum , &error);
 		returnVal = false;
 	}
 	return returnVal;
 }
-template < class T>
-class JvmtiPTR{
+
+
+template < class T> class JvmtiPTR {
 	private:
 		jvmtiEnv *__jvmti__;
 		T *__pointerRef__;
 	public:
-		JvmtiPTR( jvmtiEnv *jvmti ): __jvmti__( jvmti ), __pointerRef__( NULL ){}
-		JvmtiPTR( jvmtiEnv *jvmti , T *refPtr): __jvmti__( jvmti ), __pointerRef__( refPtr ){}
-		~JvmtiPTR();
+		JvmtiPTR(jvmtiEnv *jvmti): __jvmti__(jvmti), __pointerRef__(NULL) {}
+		JvmtiPTR(jvmtiEnv *jvmti, T *refPtr): __jvmti__(jvmti), __pointerRef__(refPtr) {}
+		virtual ~JvmtiPTR();
 		T **returnReference();
 		T *returnRef();
 			
 };
-template <class T> JvmtiPTR<T>::~JvmtiPTR(){
-	if ( __pointerRef__ != NULL ){
-		isError ( __jvmti__ ,__jvmti__->Deallocate (( unsigned char * )__pointerRef__ ) , " Error on Deallocation memory for loaded class" );
+
+
+template <class T> JvmtiPTR<T>::~JvmtiPTR(void) {
+	if (__pointerRef__ != NULL) {
+		isError(__jvmti__, __jvmti__->Deallocate((unsigned char *)__pointerRef__),
+                "Error on Deallocation memory for loaded class");
 	}
 }
-template < class T >
-T ** JvmtiPTR<T>::returnReference(){
+
+
+template < class T > T** JvmtiPTR<T>::returnReference(void) {
 	return &__pointerRef__;
 }
-template < class T >
-T * JvmtiPTR< T>::returnRef(){
+
+
+template < class T > T* JvmtiPTR< T>::returnRef(void) {
 	return __pointerRef__;
 }
-extern void sigHandler_ ( int signum, siginfo_t *info, void *context );
+
+
+extern void sigHandler_(int signum, siginfo_t *info, void *context);
 
 
 // Short version: reinterpret_cast produces undefined behavior in many
 // cases where memcpy doesn't.
-
-template <class Dest, class Source>
-inline Dest bit_cast(const Source& source) {
+template <class Dest, class Source> inline Dest bitCast(const Source& source) {
 	// Compile time assertion: sizeof(Dest) == sizeof(Source)
-//     // A compile error here means your Dest and Source have different sizes.
+   // A compile error here means your Dest and Source have different sizes.
 
-	typedef char VerifySizesAreEqual[sizeof(Dest) == sizeof(Source) ? 1 : -1]
-		__attribute__ ((unused));
+	typedef char verifySizesAreEqual[sizeof(Dest) == sizeof(Source) ? 1 : -1]
+		__attribute__((unused));
 	Dest dest;
 	memcpy(&dest, &source, sizeof(dest));
 	return dest;
 }
 
 
-
-
 // JvmMethod for getting the Jvm function for AsyncGetCallTrace.           
 class JvmMethod {                                                          
 	public:
-		template<class FunctionType>
-			static inline FunctionType GetJvmFunction(const char *function_name) { 
+        template<class FunctionType>
+            static inline FunctionType GetJvmFunction(const char *functionName) { 
 				 // get handle to library
 				 static void *handle = dlopen("libjvm.so", RTLD_LAZY);
 				 if (handle == NULL) {
@@ -120,9 +117,7 @@ class JvmMethod {
 					 return NULL;
 				 }
 				 // get address of function, return null if not found
-				 return bit_cast<FunctionType>(dlsym(handle, function_name)); 
-			}
+				 return bitCast<FunctionType>(dlsym(handle, functionName));
+            }
 };
-
-
 #endif

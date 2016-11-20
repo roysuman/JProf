@@ -3,7 +3,7 @@
  *
  *       Filename:  profiler.hpp
  *
- *    Description:  all main work of profiler
+ *    Description:  The maib handler ofprofiler.
  *
  *        Version:  1.0
  *        Created:  Friday 14 August 2015 09:36:40  IST
@@ -22,18 +22,19 @@
 #include "signaHandler.h"
 #include "onTheFlyData.h"
 #include "circulerQueue.h"
-class JavaProfiler{
+
+//core class of profiler
+class JavaProfiler {
 	public:
 		explicit JavaProfiler(jvmtiEnv *jvmtiEnv, JavaVM *javaVM):jvmti(jvmtiEnv), jvm(javaVM), sigHandler(1) {
-            circulerQueue = new CQueue(jvmtiEnv ,&JavaProfiler::getFrameInfo);
+            circulerQueue = new CQueue(jvmtiEnv, &JavaProfiler::getFrameInfo);
         }
 
-        virtual ~JavaProfiler() {
+        virtual ~JavaProfiler(void) {
             delete circulerQueue;
         }
 
         bool startProfiler();
-        //read from call trace //TODO assign it with timer(SIGNAL) 
         void readCallTrace(const int sigNum, siginfo_t *sigInfo, void *context);
 
         private:
@@ -45,7 +46,7 @@ class JavaProfiler{
         JNIEnv *getJNIEnv (void);
         CQueue *circulerQueue;
 
-        void sleepFor(const unsigned int&);
+        const int sleepFor(const unsigned int&);
         static bool getFrameInfo(jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
 };
 #endif

@@ -22,14 +22,12 @@
 #include <sys/time.h>
 #include <iostream>
 #include <string.h>
-class Signal{
+class Signal {
 	public:
-		Signal(const int interval ):timerInterval( interval){}
-		bool updateIntervalTime( void );
-		void setAction( void( *sigAction)( int , siginfo_t * , void * ) );
+		Signal(const int interval):timerInterval(interval){}
+		bool updateIntervalTime(void);
+		void setAction(void(*sigAction)(int, siginfo_t*, void*));
 	private:
 		const int timerInterval;
-   // hande and generate signal after a static time interval to get the call trace and call the syn call trace method
 };
-
 #endif
