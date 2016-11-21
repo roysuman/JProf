@@ -16,12 +16,12 @@
  * =====================================================================================
  */
 #include "global.h"
-#include "profiler.h"
+#include "processor.h"
 #include "stacktrace.h"
 
 
 asynGCTType AsynGCT::asyngct;
-static JavaProfiler  *JPROFILER;
+static Processor  *JPROFILER;
 
 
 /* 
@@ -64,7 +64,7 @@ void JNICALL callBackVMInit(jvmtiEnv *jvmti, JNIEnv *jniEnvironment, jthread thr
 		loadMethodIds(jvmti, classListRef[loop]);
 	}
 	//start profilling
-	JPROFILER->startProfiler();
+	JPROFILER->init();
 }
 
 
@@ -101,15 +101,15 @@ static bool setCapabilities(jvmtiEnv *jvmti) {
 	memset(&capabilities, 0, sizeof(jvmtiCapabilities));
     //TODO:add all necessary capabilities
 /*
-    capa.can_signal_thread = 1;
-	capa.can_get_owned_monitor_info = 1;
-	capa.can_generate_method_entry_events = 1;
-	capa.can_generate_exception_events = 1;
-	capa.can_generate_vm_object_alloc_events = 1;
-	capa.can_tag_objects = 1;
-	capa.can_get_constant_pool = 1;
-	capa.can_generate_all_class_hook_events = 1;
-*/
+    capabilities.can_signal_thread = 1;
+	capabilities.can_get_owned_monitor_info = 1;
+	capabilities.can_generate_method_entry_events = 1;
+	capabilities.can_generate_exception_events = 1;
+	capabilities.can_generate_vm_object_alloc_events = 1;
+	capabilities.can_tag_objects = 1;
+	capabilities.can_get_constant_pool = 1;
+	capabilities.can_generate_all_class_hook_events = 1;
+  */
 	capabilities.can_get_source_file_name = 1;
 	capabilities.can_get_line_numbers = 1;
 	capabilities.can_get_bytecodes = 1;
@@ -199,7 +199,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) 
     }
 
     AsynGCT::setAsynGCT(JvmMethod::GetJvmFunction<asynGCTType>("AsyncGetCallTrace"));
-    JPROFILER = new JavaProfiler (jvmti, jvm);
+    JPROFILER = new Processor (jvmti, jvm);
     return JNI_OK;
 }
 

@@ -20,6 +20,10 @@
 
 #define MAX_FRAME_TO_CAPTURE 256
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <iostream>
+
 typedef struct onTheFlyCallFrame_ onTheFlyCallFrame;
 struct onTheFlyCallFrame_ {
 	size_t     frameNo;

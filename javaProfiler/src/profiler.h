@@ -20,13 +20,13 @@
 #include "global.h"
 #include "stacktrace.h"
 #include "signaHandler.h"
-#include "onTheFlyData.h"
+#include "processData.h"
 #include "circulerQueue.h"
 
 //core class of profiler
-class JavaProfiler {
+class JavaProfiler: protected ProcessData {
 	public:
-		explicit JavaProfiler(jvmtiEnv *jvmtiEnv, JavaVM *javaVM):jvmti(jvmtiEnv), jvm(javaVM), sigHandler(1) {
+		explicit JavaProfiler(jvmtiEnv* jvmtiEnv, JavaVM* javaVM):jvmti(jvmtiEnv), jvm(javaVM), sigHandler(1) {
             circulerQueue = new CQueue(jvmtiEnv, &JavaProfiler::getFrameInfo);
         }
 
@@ -34,8 +34,10 @@ class JavaProfiler {
             delete circulerQueue;
         }
 
-        bool startProfiler();
-        void readCallTrace(const int sigNum, siginfo_t *sigInfo, void *context);
+        void readCallTrace(const int sigNum, siginfo_t* sigInfo, void* context);
+
+    protected:
+        bool startProfiler(void);
 
         private:
         jvmtiEnv  *jvmti;
@@ -47,6 +49,5 @@ class JavaProfiler {
         CQueue *circulerQueue;
 
         const int sleepFor(const unsigned int&);
-        static bool getFrameInfo(jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
 };
 #endif

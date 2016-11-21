@@ -24,7 +24,6 @@
 #include <string.h>
 #include <assert.h>
 #include <dlfcn.h>
-#include <jvmti.h>
 #include <jni.h>
 #include <stdint.h>
 #include <signal.h>
@@ -34,6 +33,7 @@
 #include <sys/types.h> 
 #include <stdint.h> 
 #include <assert.h>
+
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	  TypeName(const TypeName&);               \
   void operator=(const TypeName&)
