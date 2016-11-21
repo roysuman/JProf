@@ -3,8 +3,7 @@
  *
  *       Filename:  processData.cc
  *
- *       Description:  Process the captured stack trace/frame
- *
+ *       Description:  Process the captured stack trace/frame.
  *       Version:  1.0
  *       Created:  Monday 21 November 2016 10:46:50  IST
  *       Revision:  none
