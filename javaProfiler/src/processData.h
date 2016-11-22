@@ -24,6 +24,8 @@
 
 class ProcessData {
     public:
-        static bool getFrameInfo(jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
+        static bool getFrameInfo(jvmtiEnv* jvmti, const jmethodID&, const jlocation&, onTheFlyCallFrame&);
+    private:
+        static int getLineNumber(jvmtiEnv*, const jmethodID&, const jlocation&);  
 };
 #endif

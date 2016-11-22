@@ -40,13 +40,13 @@ class JavaProfiler: protected ProcessData {
         bool startProfiler(void);
 
         private:
-        jvmtiEnv  *jvmti;
-        JavaVM    *jvm;
+        jvmtiEnv*  jvmti;
+        JavaVM*    jvm;
         Signal sigHandler;
         void startCallBack(void);
         void worker(void);
-        JNIEnv *getJNIEnv (void);
-        CQueue *circulerQueue;
+        JNIEnv* getJNIEnv (void);
+        CQueue* circulerQueue;
 
         const int sleepFor(const unsigned int&);
 };

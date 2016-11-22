@@ -76,7 +76,7 @@ bool CQueue::pop(void) {
         std::cout<<"-------\t---------\t------------------\t-------\n";
         std::cout<<"Frame Count = "<<callTraceBuffer[readHead].numFrames<<std::endl;
         for (jint loop = 0; loop < callTraceBuffer[readHead].numFrames; ++loop) {
-            callFrameRet = frameInfo(jvmti, callFrameBuffer[readHead][loop].methodId, callFrame);
+            callFrameRet = frameInfo(jvmti, callFrameBuffer[readHead][loop].methodId, callFrameBuffer[readHead][loop].lineno, callFrame);
             //clear all data from the current frame
 			memset(&callFrameBuffer[readHead][loop], 0,  sizeof(ASGCT_CallFrame));
             if (callFrameRet) {
@@ -91,7 +91,7 @@ bool CQueue::pop(void) {
                 std::cout<<"\t"<<callFrame.className.c_str()<<"."
                     <<callFrame.methodName.c_str()
                     <<"("<<callFrame.fileName.c_str()
-                    <<":"<<callFrameBuffer[readHead][loop].lineno
+                    <<":"<<callFrame.lineNumber
                     <<")"<<std::endl;
             }
         }

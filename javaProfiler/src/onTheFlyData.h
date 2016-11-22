@@ -31,6 +31,7 @@ struct onTheFlyCallFrame_ {
 	std::string fileName;
 	std::string className;
 	std::string methodName;
+    int lineNumber;
 };
 
 typedef struct {

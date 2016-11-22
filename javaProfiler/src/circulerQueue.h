@@ -25,7 +25,7 @@
 
 #define QUEUE_CAPACITY 1024
 
-typedef bool (*getFrameInfoPtr)(jvmtiEnv *jvmti, const jmethodID&, onTheFlyCallFrame&);
+typedef bool (*getFrameInfoPtr)(jvmtiEnv *jvmti, const jmethodID&, const jlocation&, onTheFlyCallFrame&);
 
 class CQueue {
 	public:
