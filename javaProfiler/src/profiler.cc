@@ -118,6 +118,9 @@ bool JavaProfiler::startProfiler(void) {
 	return true;
 }
 
+void JavaProfiler::stopProfiler(void) {
+    signal(SIGPROF, SIG_IGN);
+}
 
 /* 
  * ===  FUNCTION  ======================================================================

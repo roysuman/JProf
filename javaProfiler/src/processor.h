@@ -30,6 +30,10 @@ class Processor: public JavaProfiler {
         inline void init(void) {
             (void)startProfiler();
         }
+
+        inline void exit(void) {
+            (void)stopProfiler();
+        }
 };
 
 #endif

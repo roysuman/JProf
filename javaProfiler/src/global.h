@@ -34,6 +34,9 @@
 #include <stdint.h> 
 #include <assert.h>
 
+// Maximum number of frame to capture from stack trace.
+#define MAX_FRAME_TO_CAPTURE 256
+
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	  TypeName(const TypeName&);               \
   void operator=(const TypeName&)

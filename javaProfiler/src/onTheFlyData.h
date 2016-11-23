@@ -18,11 +18,11 @@
 #ifndef ON_THE_FLY_DATA_H
 #define ON_THE_FLY_DATA_H
 
-#define MAX_FRAME_TO_CAPTURE 256
 
 #include <unistd.h>
 #include <sys/types.h>
 #include <iostream>
+#include "global.h"
 
 typedef struct onTheFlyCallFrame_ onTheFlyCallFrame;
 struct onTheFlyCallFrame_ {

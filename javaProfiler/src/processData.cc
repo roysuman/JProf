@@ -72,8 +72,6 @@ bool ProcessData::getFrameInfo(jvmtiEnv* jvmti, const jmethodID& methodId, const
 	return true;
 }
 
-// Given a method and a location, this method gets the line number.
-// Kind of expensive, comparatively.
 
 /* 
  * ===  FUNCTION  ======================================================================

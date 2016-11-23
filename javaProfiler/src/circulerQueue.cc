@@ -75,6 +75,9 @@ bool CQueue::pop(void) {
         successFrameData = 0;
         std::cout<<"-------\t---------\t------------------\t-------\n";
         std::cout<<"Frame Count = "<<callTraceBuffer[readHead].numFrames<<std::endl;
+#ifdef DEBUG
+        std::cout<<"\n1\t"<<callTraceBuffer[readHead].numFrames;
+#endif
         for (jint loop = 0; loop < callTraceBuffer[readHead].numFrames; ++loop) {
             callFrameRet = frameInfo(jvmti, callFrameBuffer[readHead][loop].methodId, callFrameBuffer[readHead][loop].lineno, callFrame);
             //clear all data from the current frame

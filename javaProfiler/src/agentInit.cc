@@ -76,6 +76,7 @@ void JNICALL callBackClassPepare(jvmtiEnv *jvmti, JNIEnv *jni,
 
 static void JNICALL callBackVMDeath(jvmtiEnv *jvmti, JNIEnv *jni) {
     //TODO allclearance operation.
+    JPROFILER->exit();
 }
 
 
@@ -110,6 +111,7 @@ static bool setCapabilities(jvmtiEnv *jvmti) {
 	capabilities.can_get_constant_pool = 1;
 	capabilities.can_generate_all_class_hook_events = 1;
   */
+	capabilities.can_generate_all_class_hook_events = 1;
 	capabilities.can_get_source_file_name = 1;
 	capabilities.can_get_line_numbers = 1;
 	capabilities.can_get_bytecodes = 1;

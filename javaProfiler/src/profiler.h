@@ -17,6 +17,7 @@
  */
 #ifndef PROFILER_HPP
 #define  PROFILER_HPP 
+#include <signal.h>
 #include "global.h"
 #include "stacktrace.h"
 #include "signaHandler.h"
@@ -38,6 +39,7 @@ class JavaProfiler: protected ProcessData {
 
     protected:
         bool startProfiler(void);
+        void stopProfiler(void);
 
         private:
         jvmtiEnv*  jvmti;
