@@ -1,4 +1,0 @@
-1. Agent need to disect packet received from the cleint. ( start profiling, stop profilinig and so on )
-2. need to add exit_agent flag --- TODO
-3. Client side code to analyze the data
-4. 
